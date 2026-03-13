@@ -108,7 +108,7 @@ defmodule Jeff.SecureChannel do
     iv =
       sc.rmac
       |> :binary.bin_to_list()
-      |> Enum.map(&(~~~&1 &&& 0xFF))
+      |> Enum.map(&(Bitwise.bnot(&1) &&& 0xFF))
       |> :binary.list_to_bin()
 
     :crypto.crypto_one_time(:aes_128_cbc, key, iv, data <> <<@padding_start>>,
@@ -124,7 +124,7 @@ defmodule Jeff.SecureChannel do
     iv =
       sc.cmac
       |> :binary.bin_to_list()
-      |> Enum.map(&(~~~&1 &&& 0xFF))
+      |> Enum.map(&(Bitwise.bnot(&1) &&& 0xFF))
       |> :binary.list_to_bin()
 
     :crypto.crypto_one_time(:aes_128_cbc, key, iv, data, encrypt: false)
