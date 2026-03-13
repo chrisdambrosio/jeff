@@ -79,7 +79,7 @@ defmodule Jeff.VirtualPD do
 
   defmodule StateEvent do
     @moduledoc "Emitted when PD state changes (LED, buzzer, output)."
-    defstruct [:type, :led, :on_color, :off_color, :tone, :on_time]
+    defstruct [:address, :type, :led, :on_color, :off_color, :tone, :on_time]
   end
 
   @doc "Start a VirtualPD listening on the given serial port."
@@ -270,6 +270,7 @@ defmodule Jeff.VirtualPD do
     leds = Map.put(state.leds, led_id, %{on_color: on_color, off_color: off_color})
 
     notify(state.controlling_process, %StateEvent{
+      address: state.address,
       type: :led,
       led: led_id,
       on_color: on_color,
@@ -284,6 +285,7 @@ defmodule Jeff.VirtualPD do
     buzzer = %{tone: tone, on_time: on_time}
 
     notify(state.controlling_process, %StateEvent{
+      address: state.address,
       type: :buzzer,
       tone: tone,
       on_time: on_time
