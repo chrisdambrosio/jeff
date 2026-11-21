@@ -3,8 +3,6 @@ defmodule Jeff.ACU do
   GenServer process for an ACU
   """
 
-  require Logger
-
   use GenServer
   alias Jeff.{Bus, Command, Device, Events, Message, Reply, SecureChannel, Transport}
 
@@ -231,7 +229,7 @@ defmodule Jeff.ACU do
     state =
       if device.secure_channel.established? do
         len = reply_message.length - Message.check_size(reply_message) - 4
-        <<bytes::binary-size(len), _rest::binary>> = reply_message.bytes
+        <<bytes::binary-size(^len), _rest::binary>> = reply_message.bytes
         secure_channel = SecureChannel.calculate_mac(device.secure_channel, bytes, false)
         Bus.put_device(state, %{device | secure_channel: secure_channel})
       else

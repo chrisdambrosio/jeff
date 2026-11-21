@@ -6,8 +6,6 @@ defmodule Jeff.Framing do
   Continues to accumulate bytes until the message length has been reached.
   """
 
-  require Logger
-
   @behaviour Circuits.UART.Framing
 
   @som Jeff.Message.start_of_message()
@@ -70,7 +68,7 @@ defmodule Jeff.Framing do
   # add packet when enough bytes
   defp process_data(data, %{buffer: buffer, packet_length: packet_length} = state)
        when byte_size(buffer) >= packet_length do
-    <<packet::binary-size(packet_length), rest::binary>> = buffer
+    <<packet::binary-size(^packet_length), rest::binary>> = buffer
     state = %State{packets: state.packets ++ [packet], trace?: state.trace?}
     process_data(rest <> data, state)
   end

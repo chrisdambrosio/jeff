@@ -116,7 +116,7 @@ defmodule Jeff.Command.FileTransfer do
   end
 
   defp chunk_data(data, base, max, acc) when byte_size(data) >= max do
-    <<frag::binary-size(max), rest::binary>> = data
+    <<frag::binary-size(^max), rest::binary>> = data
     cmd = %{base | data: frag, fragment_size: max, offset: next_offset(base, acc)}
     chunk_data(rest, base, max, [cmd | acc])
   end

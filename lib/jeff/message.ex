@@ -230,7 +230,7 @@ defmodule Jeff.Message do
 
   defp do_decode(bytes, %{security?: true, sb_type: nil} = message) do
     sb_len = :binary.at(bytes, 0)
-    <<sb::binary-size(sb_len), rest::binary>> = bytes
+    <<sb::binary-size(^sb_len), rest::binary>> = bytes
     <<_sb_len, sb_type, sb_data::binary>> = sb
     message = %{message | sb_type: sb_type, sb_data: sb_data}
     do_decode(rest, message)
@@ -244,7 +244,7 @@ defmodule Jeff.Message do
   defp do_decode(bytes, %{data: nil} = message) do
     data_size = byte_size(bytes) - check_size(message) - mac_size(message)
 
-    <<data::binary-size(data_size), rest::binary>> = bytes
+    <<data::binary-size(^data_size), rest::binary>> = bytes
     do_decode(rest, %{message | data: data})
   end
 
