@@ -37,7 +37,17 @@ defmodule Jeff.VirtualBus do
   @doc "Kill the socat process and clean up the virtual serial pair."
   @spec destroy(port()) :: true
   def destroy(socat_port) when is_port(socat_port) do
+    os_pid =
+      case Port.info(socat_port, :os_pid) do
+        {:os_pid, pid} -> pid
+        nil -> nil
+      end
+
+    # Closing the port only closes socat's stdin, which socat never reads,
+    # so it would keep running. Kill it outright.
     Port.close(socat_port)
+    if os_pid, do: System.cmd("kill", [Integer.to_string(os_pid)], stderr_to_stdout: true)
+    true
   end
 
   defp collect_pty_paths(socat_port, paths, started_at) do
